@@ -1,0 +1,20 @@
+[package]
+name = "targeter"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+delay = []
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+indicatif = "0.17.0"
+scan_dir = "0.3.3"
+structopt = "0.3.26"
+byte-unit = "4.0.14"
+rayon = "1.5.3"
+rand = "0.8.5"
+colorful = "0.2.1"
+num_cpus = "1.13.1"
+promptly = "0.3.1"
