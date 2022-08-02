@@ -19,7 +19,9 @@ use structopt::StructOpt;
 use crate::files::get_all_cargo_dirs;
 use crate::opt::Opt;
 
+#[cfg(feature = "delay")]
 const COSMETIC_DELAY: u64 = 15;
+#[cfg(feature = "delay")]
 const COSMETIC_DELAY_RANGE: Range<u64> = 1..2;
 
 fn main() {
@@ -37,10 +39,15 @@ fn main() {
 
     let started = Instant::now();
     let spinner_style = ProgressStyle::with_template("{prefix:.bold.dim} {spinner} {wide_msg}").unwrap().tick_chars("⠁⠂⠄⡀⢀⠠⠐⠈ ");
-    let all_target_dirs = get_all_cargo_dirs(input);
+    let all_target_dirs = get_all_cargo_dirs(&input);
 
     let map = Arc::new(Mutex::new(Vec::new()));
     let jobs_to_execute = all_target_dirs.len();
+
+    if jobs_to_execute == 0 {
+        println!("No Rust projects found in {}\nExiting...", input.display().to_string().bold());
+        return;
+    }
 
     let m = Arc::new(Mutex::new(MultiProgress::new()));
     let jobs_executed = Arc::new(Mutex::new(0));
