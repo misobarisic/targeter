@@ -2,7 +2,6 @@ mod files;
 mod opt;
 mod util;
 
-use std::ops::Range;
 use std::path::Path;
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
@@ -11,13 +10,16 @@ use std::{fs, thread};
 use byte_unit::{Byte, ByteUnit};
 use colorful::{Color, Colorful};
 use indicatif::{HumanDuration, MultiProgress, ProgressBar, ProgressStyle};
-use promptly::prompt_default;
+use interviewer::{ask_many_opt, Separator};
 use rand::Rng;
 use scan_dir::ScanDir;
 use structopt::StructOpt;
 
 use crate::files::get_all_cargo_dirs;
 use crate::opt::Opt;
+
+#[cfg(feature = "delay")]
+use std::ops::Range;
 
 #[cfg(feature = "delay")]
 const COSMETIC_DELAY: u64 = 15;
@@ -130,17 +132,11 @@ fn main() {
         println!("{} - {}", folder_str, adjusted_byte);
     }
 
-    let mut to_remove = Vec::new();
-    println!("An empty input or 0 will result in going to the next step.");
-    loop {
-        let mut age = jobs_to_execute + 1;
-        while age > jobs_to_execute {
-            age = prompt_default("Index to remove", 0).unwrap_or(0);
-        }
-        if age == 0 {
-            break;
-        }
-        to_remove.push(age - 1);
+    let mut to_remove: Vec<usize> = ask_many_opt("Which projects do you want to remove: ", Separator::Whitespace).unwrap_or_else(|| std::process::exit(0));
+    to_remove.retain(|&x| x > 0 && x <= map.len());
+
+    for x in to_remove.iter_mut().rev() {
+        *x -= 1;
     }
 
     if to_remove.is_empty() {
