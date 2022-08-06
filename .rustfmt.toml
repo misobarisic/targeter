@@ -44,3 +44,5 @@ brace_style= "SameLineWhere"
 where_single_line = true
 wrap_comments = true
 binop_separator = "Front"
+format_macro_matchers = true
+format_code_in_doc_comments = true
