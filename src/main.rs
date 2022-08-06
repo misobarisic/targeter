@@ -2,6 +2,8 @@ mod files;
 mod opt;
 mod util;
 
+#[cfg(feature = "delay")]
+use std::ops::Range;
 use std::path::Path;
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
@@ -17,9 +19,6 @@ use structopt::StructOpt;
 
 use crate::files::get_all_cargo_dirs;
 use crate::opt::Opt;
-
-#[cfg(feature = "delay")]
-use std::ops::Range;
 
 #[cfg(feature = "delay")]
 const COSMETIC_DELAY: u64 = 15;
